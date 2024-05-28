@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">iHealth</string>
+    <string name="title_home">Home</string>
+    <string name="title_browse">Browse</string>
+    <string name="title_notification">Notification</string>
+    <string name="google_maps_key">AIzaSyAbJFuEdGk-OjPt2-0DrJaVYq2DC5uKI_A</string>
+</resources>
+
