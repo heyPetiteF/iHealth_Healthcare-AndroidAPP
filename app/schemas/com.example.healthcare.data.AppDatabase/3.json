@@ -1,0 +1,144 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 3,
+    "identityHash": "603ac079559437dce2bc505387b64087",
+    "entities": [
+      {
+        "tableName": "user_info",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `weight` TEXT, `height` TEXT, `allergyMedications` TEXT, `emergencyContact` TEXT, `firstName` TEXT, `lastName` TEXT, `dob` TEXT, `phone` TEXT, `email` TEXT, `password` TEXT, `sex` TEXT, `isAdmin` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weight",
+            "columnName": "weight",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "height",
+            "columnName": "height",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "allergyMedications",
+            "columnName": "allergyMedications",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "emergencyContact",
+            "columnName": "emergencyContact",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "firstName",
+            "columnName": "firstName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "lastName",
+            "columnName": "lastName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "dob",
+            "columnName": "dob",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "phone",
+            "columnName": "phone",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "email",
+            "columnName": "email",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "password",
+            "columnName": "password",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sex",
+            "columnName": "sex",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isAdmin",
+            "columnName": "isAdmin",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "alert",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `message` TEXT, `timestamp` INTEGER NOT NULL, `temperature` REAL NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "message",
+            "columnName": "message",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "temperature",
+            "columnName": "temperature",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '603ac079559437dce2bc505387b64087')"
+    ]
+  }
+}

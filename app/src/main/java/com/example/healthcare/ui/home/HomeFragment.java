@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -39,7 +40,8 @@ public class HomeFragment extends Fragment {
     private int textIndex = 0;
     private int imageIndex = 0;
     private static ConstraintLayout preLoginLayout;
-    private static ConstraintLayout postLoginLayout;
+    private static NestedScrollView postLoginLayout;
+
     private static TextView userInfo;
 
     private TextView firstNameTextView;
@@ -149,7 +151,6 @@ public class HomeFragment extends Fragment {
         SharedPrefHelper sharedPrefHelper = new SharedPrefHelper(getContext());
         return sharedPrefHelper.isLoggedIn();
     }
-
 
     private void fetchAndDisplayUserInfo() {
         SharedPrefHelper sharedPrefHelper = new SharedPrefHelper(getContext());

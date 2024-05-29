@@ -14,6 +14,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.app.DatePickerDialog;
+import android.widget.DatePicker;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,11 +23,12 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.healthcare.R;
-
 import com.example.healthcare.data.AppDatabase;
 import com.example.healthcare.data.UserInfo;
 import com.example.healthcare.ui.home.HomeFragment;
 import com.example.healthcare.util.SharedPrefHelper;
+
+import java.util.Calendar;
 
 public class SignupFragment extends Fragment {
 
@@ -68,6 +71,10 @@ public class SignupFragment extends Fragment {
         HintSpinnerAdapter adapter = new HintSpinnerAdapter(getContext(), android.R.layout.simple_spinner_item, sexOptions);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sexSpinner.setAdapter(adapter);
+
+        dobEditText.setOnClickListener(v -> {
+            showDatePickerDialog();
+        });
 
         doneButton.setOnClickListener(v -> {
             String firstName = firstNameEditText.getText().toString();
@@ -134,6 +141,19 @@ public class SignupFragment extends Fragment {
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
 
+
+    private void showDatePickerDialog() {
+        final Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                getContext(),
+                (view, year1, month1, dayOfMonth) -> dobEditText.setText(year1 + "-" + (month1 + 1) + "-" + dayOfMonth),
+                year, month, day);
+        datePickerDialog.show();
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

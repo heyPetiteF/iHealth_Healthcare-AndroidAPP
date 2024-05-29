@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -33,7 +34,6 @@
             android:id="@+id/pre_login_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:padding="16dp"
             app:layout_constraintTop_toBottomOf="@id/viewPagerTexts"
             app:layout_constraintStart_toStartOf="parent"
@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:backgroundTint="@color/primaryColor"
-                android:text="Login"
+                android:text="@string/login"
                 android:textColor="@color/white"
                 app:layout_constraintEnd_toStartOf="@+id/buttonSignUp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -58,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:backgroundTint="@color/primaryColor"
-                android:text="Sign Up"
+                android:text="@string/sign_up"
                 android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/buttonLogin"
@@ -67,94 +67,126 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Post-login Layout -->
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.core.widget.NestedScrollView
             android:id="@+id/post_login_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:padding="16dp"
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/viewPagerTexts"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/bottomSpacer">
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/firstNameTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Firstname:"
-                android:textSize="16sp"
-                android:textColor="@color/black"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                <!-- Black Bold Title -->
+                <TextView
+                    android:id="@+id/personalInfoTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/personal_information"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
 
-            <TextView
-                android:id="@+id/lastNameTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Lastname:"
-                android:textSize="16sp"
-                android:textColor="@color/black"
-                app:layout_constraintTop_toBottomOf="@id/firstNameTextView"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                <TextView
+                    android:id="@+id/firstNameTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/firstname"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    app:layout_constraintTop_toBottomOf="@id/personalInfoTitle"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
 
-            <TextView
-                android:id="@+id/sexTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Sex:"
-                android:textSize="16sp"
-                android:textColor="@color/black"
-                app:layout_constraintTop_toBottomOf="@id/lastNameTextView"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                <TextView
+                    android:id="@+id/lastNameTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/lastname"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    app:layout_constraintTop_toBottomOf="@id/firstNameTextView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
 
-            <TextView
-                android:id="@+id/dobTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Date of Birth:"
-                android:textSize="16sp"
-                android:textColor="@color/black"
-                app:layout_constraintTop_toBottomOf="@id/sexTextView"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                <TextView
+                    android:id="@+id/sexTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/sex"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    app:layout_constraintTop_toBottomOf="@id/lastNameTextView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
 
-            <Button
-                android:id="@+id/buttonUpdateProfile"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                android:backgroundTint="@color/primaryColor"
-                android:text="Edit"
-                android:textColor="@color/white"
-                app:layout_constraintTop_toBottomOf="@id/dobTextView"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/buttonSignOut"
-                app:layout_constraintWidth_percent="0.4" />
+                <TextView
+                    android:id="@+id/dobTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/date_of_birth"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    app:layout_constraintTop_toBottomOf="@id/sexTextView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
 
-            <Button
-                android:id="@+id/buttonSignOut"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginStart="8dp"
-                android:backgroundTint="@color/primaryColor"
-                android:text="Sign out"
-                android:textColor="@color/white"
-                app:layout_constraintTop_toBottomOf="@id/dobTextView"
-                app:layout_constraintStart_toEndOf="@+id/buttonUpdateProfile"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintWidth_percent="0.4" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <Button
+                    android:id="@+id/buttonUpdateProfile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:backgroundTint="@color/primaryColor"
+                    android:text="@string/edit"
+                    android:textColor="@color/white"
+                    app:layout_constraintTop_toBottomOf="@id/dobTextView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/buttonSignOut"
+                    app:layout_constraintWidth_percent="0.4" />
+
+                <Button
+                    android:id="@+id/buttonSignOut"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="8dp"
+                    android:backgroundTint="@color/primaryColor"
+                    android:text="@string/sign_out"
+                    android:textColor="@color/white"
+                    app:layout_constraintTop_toBottomOf="@id/dobTextView"
+                    app:layout_constraintStart_toEndOf="@+id/buttonUpdateProfile"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintWidth_percent="0.4" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <!-- Spacer to push content up by 70dp from the bottom -->
+        <View
+            android:id="@+id/bottomSpacer"
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
