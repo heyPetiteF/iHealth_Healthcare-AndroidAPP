@@ -119,7 +119,7 @@ public class BrowseFragment extends Fragment {
             }
         });
         //Bluetooth Simulation
-        simulateBluetoothData();
+//        simulateBluetoothData();
 
         return root;
     }
@@ -348,17 +348,16 @@ public class BrowseFragment extends Fragment {
     }
 
     //Bluetooth Simulation
-    private void simulateBluetoothData() {
-        new Thread(() -> {
-            try {
-                Thread.sleep(5000); // Simulate delay
-                if (getActivity() != null) {
-                    getActivity().runOnUiThread(() -> updateSensorData("1000;36.5;1"));
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
-    //Bluetooth Simulation
+//    private void simulateBluetoothData() {
+//        new Thread(() -> {
+//            try {
+//                Thread.sleep(5000); // Simulate delay
+//                if (getActivity() != null) {
+//                    getActivity().runOnUiThread(() -> updateSensorData("1000;36.5;1"));
+//                }
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }).start();
+//    }
 }
