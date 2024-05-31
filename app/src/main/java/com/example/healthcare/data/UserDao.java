@@ -11,7 +11,8 @@ import java.util.List;
 public interface UserDao {
     @Insert
     void insert(UserInfo userInfo);
-
+    @Update
+    void update(UserInfo userInfo);
     @Query("SELECT * FROM user_info WHERE id = :id")
     UserInfo getUserById(int id);
 
@@ -23,9 +24,6 @@ public interface UserDao {
 
     @Query("SELECT * FROM user_info WHERE email = :email AND firstName = :firstName AND dob = :dob")
     UserInfo getUserByEmailAndNameAndDob(String email, String firstName, String dob);
-
-    @Update
-    void update(UserInfo userInfo);
 
     @Query("SELECT * FROM user_info")
     List<UserInfo> getAllUsers();

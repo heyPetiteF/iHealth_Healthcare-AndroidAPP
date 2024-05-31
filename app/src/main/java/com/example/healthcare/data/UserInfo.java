@@ -20,4 +20,6 @@ public class UserInfo {
     public String password;
     public String sex;
     public boolean isAdmin;
+    public String steps;
+    public String bodyTemperature;
 }

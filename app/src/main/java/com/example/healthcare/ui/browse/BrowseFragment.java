@@ -23,11 +23,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.healthcare.R;
+import com.example.healthcare.data.AppDatabase;
 import com.example.healthcare.data.UserInfo;
 import com.example.healthcare.ui.map.MapActivity;
+import com.example.healthcare.ui.notification.NotificationFragment;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -106,13 +109,17 @@ public class BrowseFragment extends Fragment {
 
         browseViewModel.getUserInfo().observe(getViewLifecycleOwner(), userInfo -> {
             if (userInfo != null) {
-                weight.setText(userInfo.weight);
-                height.setText(userInfo.height);
-                allergyMedications.setText(userInfo.allergyMedications);
-                emergencyContact.setText(userInfo.emergencyContact);
+                weight.setText(userInfo.weight != null ? userInfo.weight : "No Data");
+                height.setText(userInfo.height != null ? userInfo.height : "No Data");
+                allergyMedications.setText(userInfo.allergyMedications != null ? userInfo.allergyMedications : "No Data");
+                emergencyContact.setText(userInfo.emergencyContact != null ? userInfo.emergencyContact : "No Data");
+                stepsTextView.setText(userInfo.steps != null ? userInfo.steps : "No Data");
+                bodyTemperatureTextView.setText(userInfo.bodyTemperature != null ? userInfo.bodyTemperature : "No Data");
                 calculateBMIAndUpdateUI();
             }
         });
+        //Bluetooth Simulation
+        simulateBluetoothData();
 
         return root;
     }
@@ -245,7 +252,6 @@ public class BrowseFragment extends Fragment {
                             }, REQUEST_BLUETOOTH_PERMISSION);
                             return;
                         }
-
                         connectToDevice(selectedDevice);
                     }
                 });
@@ -290,38 +296,34 @@ public class BrowseFragment extends Fragment {
 
     private void updateSensorData(String data) {
         Log.d(TAG, "Updating sensor data: " + data);
-        // 假设数据是以某种方式分隔的，例如 "sensor1:1000,sensor2:5,sensor3:10"
-        String[] dataPairs = data.split(",");
-        for (String pair : dataPairs) {
-            String[] keyValue = pair.split(":");
-            if (keyValue.length == 2) {
-                String key = keyValue[0];
-                String value = keyValue[1];
+        // 假设数据是以某种方式分隔的，例如 "1000;36.5;1"
+        String[] dataValues = data.split(";");
+        if (dataValues.length == 3) {
+            try {
+                String steps = dataValues[0];
+                String bodyTemperature = dataValues[1];
+                int fallAlert = Integer.parseInt(dataValues[2]);
 
-                switch (key) {
-                    case "steps":
-                        stepsTextView.setText(value);
-                        break;
-                    case "walkingDistance":
-                        walkingDistanceTextView.setText(value);
-                        break;
-                    case "runningSpeed":
-                        runningSpeedTextView.setText(value);
-                        break;
-                    case "bodyTemperature":
-                        bodyTemperatureTextView.setText(value);
-                        break;
-                    case "timeInBed":
-                        timeInBedTextView.setText(value);
-                        break;
-                    case "anxietyRisk":
-                        anxietyRiskTextView.setText(value);
-                        break;
-                    default:
-                        Log.w(TAG, "Unknown sensor data key: " + key);
-                        break;
+                stepsTextView.setText(steps);
+                bodyTemperatureTextView.setText(bodyTemperature);
+
+                BrowseViewModel viewModel = new ViewModelProvider(this).get(BrowseViewModel.class);
+                viewModel.updateUserInfo("steps", steps);
+                viewModel.updateUserInfo("bodyTemperature", bodyTemperature);
+
+                if (fallAlert == 1) {
+                    NotificationFragment.showFallAlertNotification(getContext(), "Fall detected");
                 }
+
+                double bodyTempValue = Double.parseDouble(bodyTemperature);
+                if (bodyTempValue < 35 || bodyTempValue > 37.5) {
+                    NotificationFragment.showFallAlertNotification(getContext(), "Abnormal body temperature detected");
+                }
+            } catch (NumberFormatException e) {
+                Log.e(TAG, "Invalid sensor data format", e);
             }
+        } else {
+            Log.e(TAG, "Invalid sensor data length");
         }
     }
 
@@ -344,4 +346,19 @@ public class BrowseFragment extends Fragment {
             }
         }
     }
+
+    //Bluetooth Simulation
+    private void simulateBluetoothData() {
+        new Thread(() -> {
+            try {
+                Thread.sleep(5000); // Simulate delay
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> updateSensorData("1000;36.5;1"));
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+    //Bluetooth Simulation
 }

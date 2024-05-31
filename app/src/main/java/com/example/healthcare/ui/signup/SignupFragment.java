@@ -152,6 +152,7 @@ public class SignupFragment extends Fragment {
                 getContext(),
                 (view, year1, month1, dayOfMonth) -> dobEditText.setText(year1 + "-" + (month1 + 1) + "-" + dayOfMonth),
                 year, month, day);
+        datePickerDialog.getDatePicker().setCalendarViewShown(true);
         datePickerDialog.show();
     }
 

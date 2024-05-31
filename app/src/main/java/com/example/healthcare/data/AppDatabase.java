@@ -10,7 +10,7 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {UserInfo.class, Alert.class}, version = 3)
+@Database(entities = {UserInfo.class, Alert.class}, version = 4)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase instance;
     public abstract UserDao userDao();
@@ -22,6 +22,7 @@ public abstract class AppDatabase extends RoomDatabase {
                             AppDatabase.class, "app_database")
                     .fallbackToDestructiveMigration()
                     .addMigrations(MIGRATION_2_3)
+                    .addMigrations(MIGRATION_1_2)
                     .addCallback(roomCallback)
                     .build();
         }
@@ -38,6 +39,14 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE user_info ADD COLUMN steps TEXT");
+            database.execSQL("ALTER TABLE user_info ADD COLUMN bodyTemperature TEXT");
+        }
+    };
+
     private static RoomDatabase.Callback roomCallback = new RoomDatabase.Callback() {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
@@ -49,7 +58,9 @@ public abstract class AppDatabase extends RoomDatabase {
     private static class PopulateDbAsyncTask extends AsyncTask<Void, Void, Void> {
         private UserDao userDao;
 
+
         private PopulateDbAsyncTask(AppDatabase db) {
+
             userDao = db.userDao();
         }
 
@@ -68,4 +79,6 @@ public abstract class AppDatabase extends RoomDatabase {
             return null;
         }
     }
+
+
 }

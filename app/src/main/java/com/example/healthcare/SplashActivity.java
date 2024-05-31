@@ -28,13 +28,12 @@ public class SplashActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_splash);
 
-        // 延迟2秒后跳转到主活动
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                 startActivity(intent);
             }
-        }, 2000); // 2000毫秒 = 2秒
+        }, 2000);
     }
 }

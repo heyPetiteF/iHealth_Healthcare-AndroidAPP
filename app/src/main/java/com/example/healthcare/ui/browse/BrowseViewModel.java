@@ -52,17 +52,37 @@ public class BrowseViewModel extends AndroidViewModel {
     }
 
     public void updateUserInfo(String dataType, String data) {
-        if (userInfo.getValue() == null) {
-            userInfo.setValue(new UserInfo());
-        }
-        UserInfo currentUserInfo = userInfo.getValue();
-        if (dataType.equals("weight")) {
-            currentUserInfo.weight = data;
-        } else if (dataType.equals("height")) {
-            currentUserInfo.height = data;
-        }
-        userInfo.setValue(currentUserInfo);
+        executorService.execute(() -> {
+            UserInfo currentUserInfo = userInfo.getValue();
+            if (currentUserInfo == null) {
+                currentUserInfo = new UserInfo();
+                currentUserInfo.id = 1;
+            }
+            switch (dataType) {
+                case "weight":
+                    currentUserInfo.weight = data;
+                    break;
+                case "height":
+                    currentUserInfo.height = data;
+                    break;
+                case "allergyMedications":
+                    currentUserInfo.allergyMedications = data;
+                    break;
+                case "emergencyContact":
+                    currentUserInfo.emergencyContact = data;
+                    break;
+                case "steps":
+                    currentUserInfo.steps = data;
+                    break;
+                case "bodyTemperature":
+                    currentUserInfo.bodyTemperature = data;
+                    break;
+            }
+            database.userDao().update(currentUserInfo);
+            userInfo.postValue(currentUserInfo);
+        });
     }
+
 
     public void setSensorData(String data) {
         sensorData.setValue(data);

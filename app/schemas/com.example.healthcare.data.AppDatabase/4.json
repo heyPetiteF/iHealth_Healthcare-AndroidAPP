@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 3,
+    "version": 4,
     "identityHash": "5fa065463c3a07cc11d50e956c8191c3",
     "entities": [
       {
         "tableName": "user_info",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `weight` TEXT, `height` TEXT, `allergyMedications` TEXT, `emergencyContact` TEXT, `firstName` TEXT, `lastName` TEXT, `dob` TEXT, `phone` TEXT, `email` TEXT, `password` TEXT, `sex` TEXT, `isAdmin` INTEGER NOT NULL, `steps` TEXT, `bodyTemperature` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `weight` TEXT, `height` TEXT, `allergyMedications` TEXT, `emergencyContact` TEXT, `firstName` TEXT, `lastName` TEXT, `dob` TEXT, `phone` TEXT, `email` TEXT, `password` TEXT, `sex` TEXT, `steps` TEXT, `bodyTemperature` TEXT, `isAdmin` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -81,12 +81,6 @@
             "notNull": false
           },
           {
-            "fieldPath": "isAdmin",
-            "columnName": "isAdmin",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
             "fieldPath": "steps",
             "columnName": "steps",
             "affinity": "TEXT",
@@ -97,6 +91,12 @@
             "columnName": "bodyTemperature",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "isAdmin",
+            "columnName": "isAdmin",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {

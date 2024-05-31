@@ -1,5 +1,6 @@
 package com.example.healthcare.ui.notification;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +10,6 @@ import android.widget.TextView;
 import android.app.AlertDialog;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.healthcare.R;
@@ -62,7 +62,6 @@ public class NotificationFragment extends Fragment {
                         valueView.setText(String.valueOf(alert.temperature));
 
                         alertContainer.addView(alertView);
-                        showAlertDialog(alert.message);
                     }
                 }
             });
@@ -77,11 +76,18 @@ public class NotificationFragment extends Fragment {
         binding = null;
     }
 
-    private void showAlertDialog(String alertTitle) {
-        new AlertDialog.Builder(getContext())
+    public static void showFallAlertNotification(Context context, String alertMessage) {
+        new AlertDialog.Builder(context)
                 .setTitle("Abnormal Alert")
-                .setMessage(alertTitle)
+                .setMessage(alertMessage)
                 .setPositiveButton(android.R.string.ok, null)
                 .show();
+        new Thread(() -> {
+            AppDatabase db = AppDatabase.getInstance(context);
+            Alert alert = new Alert();
+            alert.timestamp = System.currentTimeMillis();
+            alert.message = alertMessage;
+            db.alertDao().insert(alert);
+        }).start();
     }
 }

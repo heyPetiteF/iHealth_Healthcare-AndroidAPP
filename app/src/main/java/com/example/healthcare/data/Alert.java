@@ -8,7 +8,6 @@ public class Alert {
 
     @PrimaryKey(autoGenerate = true)
     public int id;
-
     public String message;
     public long timestamp;
     public float temperature;
