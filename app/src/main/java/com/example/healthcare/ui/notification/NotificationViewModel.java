@@ -1,77 +1,55 @@
 package com.example.healthcare.ui.notification;
 
+import android.content.Context;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import com.example.healthcare.data.AppDatabase;
+
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class NotificationViewModel extends ViewModel {
+    private final MutableLiveData<List<com.example.healthcare.data.Alert>> alerts;
+    private final ExecutorService executorService;
+    private final AppDatabase db;
 
-    private final MutableLiveData<List<Alert>> alerts;
-
-    public NotificationViewModel() {
-        alerts = new MutableLiveData<>();
+    public NotificationViewModel(Context context) {
+        alerts = new MutableLiveData<List<com.example.healthcare.data.Alert>>();
+        executorService = Executors.newSingleThreadExecutor();
+        db = AppDatabase.getInstance(context);
         loadAlerts();
     }
 
-    public LiveData<List<Alert>> getAlerts() {
+    public LiveData<List<com.example.healthcare.data.Alert>> getAlerts() {
         return alerts;
     }
 
     private void loadAlerts() {
-        List<Alert> alertList = fetchDataFromDatabase();
-        alerts.setValue(alertList);
+        executorService.execute(() -> {
+            List<com.example.healthcare.data.Alert> alertList = fetchDataFromDatabase();
+            alerts.postValue(alertList);
+        });
     }
 
-    private List<Alert> fetchDataFromDatabase() {
-        List<Alert> alertList = new ArrayList<>();
-        String url = "jdbc:mysql://your-xampp-server-address:3306/your-database-name";
-        String user = "your-database-username";
-        String password = "your-database-password";
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date now = new Date();
-        String threeDaysAgo = sdf.format(new Date(now.getTime() - 3L * 24 * 60 * 60 * 1000));
-
-        try {
-            Connection conn = DriverManager.getConnection(url, user, password);
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM alerts WHERE time >= '" + threeDaysAgo + "'");
-
-            while (rs.next()) {
-                String title = rs.getString("title");
-                String time = rs.getString("time");
-                String value = rs.getString("value");
-                alertList.add(new Alert(title, time, value));
-            }
-
-            rs.close();
-            stmt.close();
-            conn.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return alertList;
+    private List<com.example.healthcare.data.Alert> fetchDataFromDatabase() {
+        long currentTime = System.currentTimeMillis();
+        long threeDaysAgo = currentTime - (3 * 24 * 60 * 60 * 1000);
+        return db.alertDao().getAlertsSince(threeDaysAgo);
     }
 
     public static class Alert {
-        public String title;
-        public String time;
-        public String value;
+        public String message;
+        public long timestamp;
+        public float temperature;
 
-        public Alert(String title, String time, String value) {
-            this.title = title;
-            this.time = time;
-            this.value = value;
+        public Alert(String message, long timestamp, float temperature) {
+            this.message = message;
+            this.timestamp = timestamp;
+            this.temperature = temperature;
         }
     }
 }

@@ -38,6 +38,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Calendar;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class BrowseFragment extends Fragment {
 
@@ -127,13 +130,21 @@ public class BrowseFragment extends Fragment {
     // EditText
     private void setupEditTextListeners(EditText editText, String dataType) {
         editText.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
+            if (hasFocus) {
+                if ("No Data".equals(editText.getText().toString())) {
+                    editText.setText("");
+                }
+            } else {
                 String data = editText.getText().toString();
-                // Save the data to the database
-                saveDataToDatabase(dataType, data);
+                if (data.isEmpty()) {
+                    editText.setText("No Data");
+                } else {
+                    // Save the data to the database
+                    saveDataToDatabase(dataType, data);
 
-                if (dataType.equals("weight") || dataType.equals("height")) {
-                    calculateBMIAndUpdateUI();
+                    if (dataType.equals("weight") || dataType.equals("height")) {
+                        calculateBMIAndUpdateUI();
+                    }
                 }
             }
         });
@@ -289,7 +300,10 @@ public class BrowseFragment extends Fragment {
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Error connecting to Bluetooth device", e);
-                getActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Error connecting to Bluetooth device", Toast.LENGTH_SHORT).show());
+                getActivity().runOnUiThread(() -> {
+                    bodyTemperatureTextView.setText("No Data");
+                    Toast.makeText(getContext(), "Error connecting to Bluetooth device", Toast.LENGTH_SHORT).show();
+                });
             }
         }).start();
     }
@@ -325,6 +339,32 @@ public class BrowseFragment extends Fragment {
         } else {
             Log.e(TAG, "Invalid sensor data length");
         }
+    }
+
+    private void resetStepsAtMidnight() {
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                getActivity().runOnUiThread(() -> {
+                    stepsTextView.setText("0");
+                    browseViewModel.updateUserInfo("steps", "0");
+                });
+            }
+        };
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        long initialDelay = calendar.getTimeInMillis() - System.currentTimeMillis();
+        if (initialDelay < 0) {
+            initialDelay += 24 * 60 * 60 * 1000; // Add one day in milliseconds
+        }
+
+        timer.scheduleAtFixedRate(task, initialDelay, 24 * 60 * 60 * 1000); // Schedule to run daily at midnight
     }
 
     @Override

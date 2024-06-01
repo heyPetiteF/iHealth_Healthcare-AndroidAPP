@@ -72,8 +72,6 @@ dependencies {
     // CircleImageView for circular image view
     implementation("de.hdodenhof:circleimageview:3.1.0")
 
-    implementation("mysql:mysql-connector-java:8.0.26")
-
     implementation("com.google.android.gms:play-services-maps:17.0.0")
     implementation("com.google.android.gms:play-services-location:17.0.0")
     implementation("com.google.android.libraries.places:places:2.5.0")

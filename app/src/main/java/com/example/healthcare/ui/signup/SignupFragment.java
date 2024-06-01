@@ -2,6 +2,7 @@ package com.example.healthcare.ui.signup;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.app.DatePickerDialog;
 import android.widget.DatePicker;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -142,6 +144,8 @@ public class SignupFragment extends Fragment {
     }
 
 
+    // Inside SignupFragment.java
+
     private void showDatePickerDialog() {
         final Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -152,9 +156,17 @@ public class SignupFragment extends Fragment {
                 getContext(),
                 (view, year1, month1, dayOfMonth) -> dobEditText.setText(year1 + "-" + (month1 + 1) + "-" + dayOfMonth),
                 year, month, day);
-        datePickerDialog.getDatePicker().setCalendarViewShown(true);
+
+        Locale locale = new Locale("en");
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        datePickerDialog.getDatePicker().getContext().getResources().updateConfiguration(config, datePickerDialog.getDatePicker().getContext().getResources().getDisplayMetrics());
+
         datePickerDialog.show();
     }
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

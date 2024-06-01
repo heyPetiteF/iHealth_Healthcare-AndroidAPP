@@ -11,4 +11,5 @@ public class Alert {
     public String message;
     public long timestamp;
     public float temperature;
+    
 }
