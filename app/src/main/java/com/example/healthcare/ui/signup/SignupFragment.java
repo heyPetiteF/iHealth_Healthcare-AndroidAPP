@@ -1,5 +1,6 @@
 package com.example.healthcare.ui.signup;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -157,11 +159,16 @@ public class SignupFragment extends Fragment {
                 (view, year1, month1, dayOfMonth) -> dobEditText.setText(year1 + "-" + (month1 + 1) + "-" + dayOfMonth),
                 year, month, day);
 
+        // Ensure the date picker dialog is displayed in English
+        Context context = new ContextThemeWrapper(getContext(), android.R.style.Theme_Holo_Light_Dialog);
         Locale locale = new Locale("en");
         Locale.setDefault(locale);
         Configuration config = new Configuration();
-        config.locale = locale;
-        datePickerDialog.getDatePicker().getContext().getResources().updateConfiguration(config, datePickerDialog.getDatePicker().getContext().getResources().getDisplayMetrics());
+        config.setLocale(locale);
+        context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
+
+        datePickerDialog = new DatePickerDialog(context);
+        datePickerDialog.setOnDateSetListener((view, year1, month1, dayOfMonth) -> dobEditText.setText(year1 + "-" + (month1 + 1) + "-" + dayOfMonth));
 
         datePickerDialog.show();
     }
