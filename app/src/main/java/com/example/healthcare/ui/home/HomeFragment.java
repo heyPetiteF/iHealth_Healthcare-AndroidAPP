@@ -24,8 +24,7 @@ import com.example.healthcare.R;
 import com.example.healthcare.data.AppDatabase;
 import com.example.healthcare.data.UserInfo;
 import com.example.healthcare.util.SharedPrefHelper;
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
+
 
 import java.util.List;
 
@@ -115,14 +114,7 @@ public class HomeFragment extends Fragment {
 
         // Check if user is logged in
         boolean isLoggedIn = checkUserLoggedIn();
-        if (isLoggedIn) {
-            preLoginLayout.setVisibility(View.GONE);
-            postLoginLayout.setVisibility(View.VISIBLE);
-            fetchAndDisplayUserInfo();
-        } else {
-            preLoginLayout.setVisibility(View.VISIBLE);
-            postLoginLayout.setVisibility(View.GONE);
-        }
+        updateUILayout(isLoggedIn);
 
         buttonUpdateProfile.setOnClickListener(v -> {
             Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_editProfileFragment);
@@ -132,9 +124,9 @@ public class HomeFragment extends Fragment {
             SharedPrefHelper sharedPrefHelper = new SharedPrefHelper(getContext());
             sharedPrefHelper.clear();
 
-            // Switch to pre-login layout
-            preLoginLayout.setVisibility(View.VISIBLE);
-            postLoginLayout.setVisibility(View.GONE);
+            updateUILayout(false);
+
+            ((MainActivity) getActivity()).resetAllFragments();
         });
         return root;
     }
@@ -150,6 +142,17 @@ public class HomeFragment extends Fragment {
     private boolean checkUserLoggedIn() {
         SharedPrefHelper sharedPrefHelper = new SharedPrefHelper(getContext());
         return sharedPrefHelper.isLoggedIn();
+    }
+
+    private void updateUILayout(boolean isLoggedIn) {
+        if (isLoggedIn) {
+            preLoginLayout.setVisibility(View.GONE);
+            postLoginLayout.setVisibility(View.VISIBLE);
+            fetchAndDisplayUserInfo();
+        } else {
+            preLoginLayout.setVisibility(View.VISIBLE);
+            postLoginLayout.setVisibility(View.GONE);
+        }
     }
 
     private void fetchAndDisplayUserInfo() {
@@ -168,5 +171,13 @@ public class HomeFragment extends Fragment {
                 }
             });
         }).start();
+    }
+    public void resetToInitialState() {
+        preLoginLayout.setVisibility(View.VISIBLE);
+        postLoginLayout.setVisibility(View.GONE);
+        firstNameTextView.setText("");
+        lastNameTextView.setText("");
+        sexTextView.setText("");
+        dobTextView.setText("");
     }
 }

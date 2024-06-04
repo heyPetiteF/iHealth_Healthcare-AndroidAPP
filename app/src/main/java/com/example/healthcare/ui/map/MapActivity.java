@@ -1,9 +1,11 @@
 package com.example.healthcare.ui.map;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -24,16 +26,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.net.PlacesClient;
-import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
-import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
-import com.google.android.libraries.places.api.net.PlacesStatusCodes;
-import com.google.android.libraries.places.api.model.PlaceLikelihood;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.PlacesStatusCodes;
-import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.model.PlaceLikelihood;
+import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.gms.common.api.Status;
 
 import java.util.Arrays;
 import java.util.List;
@@ -66,11 +66,34 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
         placesClient = Places.createClient(this);
 
+        // Initialize the map
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
+
+        // Initialize the AutocompleteSupportFragment
+        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(@NonNull Place place) {
+                // Handle the selected place
+                Log.i("MapActivity", "Place: " + place.getName() + ", " + place.getId());
+                if (place.getLatLng() != null) {
+                    mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getName()));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 15));
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Status status) {
+                // Handle the error
+                Log.e("MapActivity", "An error occurred: " + status);
+            }
+        });
     }
 
     @Override
@@ -82,14 +105,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
             fusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            if (location != null) {
-                                LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
-                                findNearbyPharmacies(currentLocation);
-                            }
+                    .addOnSuccessListener(this, location -> {
+                        if (location != null) {
+                            LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
+                            findNearbyPharmacies(currentLocation);
                         }
                     });
         } else {
@@ -102,22 +122,27 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void findNearbyPharmacies(LatLng location) {
         List<Place.Field> placeFields = Arrays.asList(Place.Field.NAME, Place.Field.LAT_LNG);
-
         FindCurrentPlaceRequest request = FindCurrentPlaceRequest.newInstance(placeFields);
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOCATION_PERMISSION_REQUEST_CODE);
+            return;
+        }
+
         placesClient.findCurrentPlace(request).addOnSuccessListener(
-                (response) -> {
+                response -> {
+                    mMap.clear(); // Clear existing markers
                     for (PlaceLikelihood placeLikelihood : response.getPlaceLikelihoods()) {
                         Place place = placeLikelihood.getPlace();
                         LatLng latLng = place.getLatLng();
-                        if (latLng != null) {
+                        if (latLng != null && place.getName().toLowerCase().contains("pharmacy")) {
                             mMap.addMarker(new MarkerOptions().position(latLng).title(place.getName()));
                         }
                     }
                 }
-        ).addOnFailureListener((exception) -> {
-            exception.printStackTrace();
-        });
+        ).addOnFailureListener(exception -> exception.printStackTrace());
     }
 
     @Override
@@ -138,6 +163,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                         == PackageManager.PERMISSION_GRANTED) {
                     mMap.setMyLocationEnabled(true);
+                    fusedLocationClient.getLastLocation()
+                            .addOnSuccessListener(this, location -> {
+                                if (location != null) {
+                                    LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
+                                    findNearbyPharmacies(currentLocation);
+                                }
+                            });
                 }
             } else {
                 Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();

@@ -122,26 +122,27 @@ public class BrowseFragment extends Fragment {
             }
         });
         //Bluetooth Simulation
-//        simulateBluetoothData();
+        simulateBluetoothData();
 
         return root;
     }
 
     // EditText
     private void setupEditTextListeners(EditText editText, String dataType) {
+        editText.setOnClickListener(v -> {
+            if ("No Data".equals(editText.getText().toString())) {
+                editText.setText("");
+            }
+        });
+
         editText.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) {
-                if ("No Data".equals(editText.getText().toString())) {
-                    editText.setText("");
-                }
-            } else {
+            if (!hasFocus) {
                 String data = editText.getText().toString();
                 if (data.isEmpty()) {
                     editText.setText("No Data");
                 } else {
                     // Save the data to the database
                     saveDataToDatabase(dataType, data);
-
                     if (dataType.equals("weight") || dataType.equals("height")) {
                         calculateBMIAndUpdateUI();
                     }
@@ -149,6 +150,7 @@ public class BrowseFragment extends Fragment {
             }
         });
     }
+
 
     private void saveDataToDatabase(String dataType, String data) {
         browseViewModel.updateUserInfo(dataType, data);
@@ -285,6 +287,7 @@ public class BrowseFragment extends Fragment {
         new Thread(() -> {
             try {
                 bluetoothSocket = device.createRfcommSocketToServiceRecord(MY_UUID);
+                Log.d(TAG, "Attempting to connect to device: " + device.getName());
                 bluetoothSocket.connect();
                 Log.d(TAG, "Connected to device: " + device.getName());
 
@@ -294,16 +297,23 @@ public class BrowseFragment extends Fragment {
 
                 while (true) {
                     bytes = inputStream.read(buffer);
-                    String data = new String(buffer, 0, bytes);
-                    Log.d(TAG, "Received data: " + data);
-                    getActivity().runOnUiThread(() -> updateSensorData(data));
+                    if (bytes > 0) {
+                        String data = new String(buffer, 0, bytes);
+                        Log.d(TAG, "Received data: " + data);
+                        getActivity().runOnUiThread(() -> updateSensorData(data));
+                    }
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Error connecting to Bluetooth device", e);
                 getActivity().runOnUiThread(() -> {
                     bodyTemperatureTextView.setText("No Data");
-                    Toast.makeText(getContext(), "Error connecting to Bluetooth device", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Error connecting to Bluetooth device: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
+                try {
+                    bluetoothSocket.close();
+                } catch (IOException closeException) {
+                    Log.e(TAG, "Could not close the client socket", closeException);
+                }
             }
         }).start();
     }
@@ -326,12 +336,12 @@ public class BrowseFragment extends Fragment {
                 viewModel.updateUserInfo("bodyTemperature", bodyTemperature);
 
                 if (fallAlert == 1) {
-                    NotificationFragment.showFallAlertNotification(getContext(), "Fall detected");
+                    NotificationFragment.showFallAlertNotification(getContext(), "Fall detected", null);
                 }
 
                 double bodyTempValue = Double.parseDouble(bodyTemperature);
-                if (bodyTempValue < 35 || bodyTempValue > 37.5) {
-                    NotificationFragment.showFallAlertNotification(getContext(), "Abnormal body temperature detected");
+                if (bodyTempValue < 35.5 || bodyTempValue > 37.5) {
+                    NotificationFragment.showFallAlertNotification(getContext(), "Abnormal body temperature detected", (float) bodyTempValue);
                 }
             } catch (NumberFormatException e) {
                 Log.e(TAG, "Invalid sensor data format", e);
@@ -387,17 +397,45 @@ public class BrowseFragment extends Fragment {
         }
     }
 
+    public void resetToInitialState() {
+        stepsTextView.setText("No Data");
+        walkingDistanceTextView.setText("No Data");
+        runningSpeedTextView.setText("No Data");
+        bodyTemperatureTextView.setText("No Data");
+        bodyFatPercentageTextView.setText("No Data");
+        timeInBedTextView.setText("No Data");
+        anxietyRiskTextView.setText("No Data");
+        weight.setText("No Data");
+        height.setText("No Data");
+        allergyMedications.setText("No Data");
+        emergencyContact.setText("No Data");
+    }
+
     //Bluetooth Simulation
-//    private void simulateBluetoothData() {
-//        new Thread(() -> {
-//            try {
-//                Thread.sleep(5000); // Simulate delay
-//                if (getActivity() != null) {
-//                    getActivity().runOnUiThread(() -> updateSensorData("1000;36.5;1"));
-//                }
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }).start();
-//    }
+    // Bluetooth Simulation
+    private void simulateBluetoothData() {
+        new Thread(() -> {
+            try {
+                int steps = 0; // Initial step count
+
+                while (true) {
+                    Thread.sleep(5000);
+
+                    steps += (int) (Math.random() * 50);
+                    double bodyTemperature = 35.0 + Math.random() * 3.0;
+                    int fallAlert = Math.random() < 0.1 ? 1 : 0;
+
+                    String simulatedData = steps + ";" + String.format("%.2f", bodyTemperature) + ";" + fallAlert;
+
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(() -> updateSensorData(simulatedData));
+                    }
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+
 }

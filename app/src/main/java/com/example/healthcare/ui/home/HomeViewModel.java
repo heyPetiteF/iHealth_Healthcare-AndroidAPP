@@ -35,7 +35,7 @@ public class HomeViewModel extends ViewModel {
         List<String[]> textList = new ArrayList<>();
         textList.add(new String[]{"View your health data", "Check your health data at any time.\nBody temperature, Steps, Heart Rate, etc.\nTo help you fully understand your physical condition."});
         textList.add(new String[]{"Provide danger alerts", "Real-time monitoring of health risks.\nAbnormal Temperature, Sudden Falls, etc.\nSending timely alerts to ensure your safety."});
-        textList.add(new String[]{"Find a nearby pharmacy", "Quickly locate pharmacies around you\nTo conveniently take care of your health."});
+        textList.add(new String[]{"Find a nearby pharmacy", "Quickly locate pharmacies around you.\nTo conveniently take care of your health."});
 
         texts.setValue(textList);
     }
