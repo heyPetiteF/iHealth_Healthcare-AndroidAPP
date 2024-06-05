@@ -122,7 +122,7 @@ public class BrowseFragment extends Fragment {
             }
         });
         //Bluetooth Simulation
-        simulateBluetoothData();
+        //simulateBluetoothData();
 
         return root;
     }
@@ -413,29 +413,28 @@ public class BrowseFragment extends Fragment {
 
     //Bluetooth Simulation
     // Bluetooth Simulation
-    private void simulateBluetoothData() {
-        new Thread(() -> {
-            try {
-                int steps = 0; // Initial step count
-
-                while (true) {
-                    Thread.sleep(5000);
-
-                    steps += (int) (Math.random() * 50);
-                    double bodyTemperature = 35.0 + Math.random() * 3.0;
-                    int fallAlert = Math.random() < 0.1 ? 1 : 0;
-
-                    String simulatedData = steps + ";" + String.format("%.2f", bodyTemperature) + ";" + fallAlert;
-
-                    if (getActivity() != null) {
-                        getActivity().runOnUiThread(() -> updateSensorData(simulatedData));
-                    }
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
-
+//    private void simulateBluetoothData() {
+//        new Thread(() -> {
+//            try {
+//                int steps = 0; // Initial step count
+//
+//                while (true) {
+//                    Thread.sleep(5000);
+//
+//                    steps += (int) (Math.random() * 50);
+//                    double bodyTemperature = 35.0 + Math.random() * 3.0;
+//                    int fallAlert = Math.random() < 0.1 ? 1 : 0;
+//
+//                    String simulatedData = steps + ";" + String.format("%.2f", bodyTemperature) + ";" + fallAlert;
+//
+//                    if (getActivity() != null) {
+//                        getActivity().runOnUiThread(() -> updateSensorData(simulatedData));
+//                    }
+//                }
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }).start();
+//    }
 
 }
